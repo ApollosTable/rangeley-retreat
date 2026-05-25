@@ -1,11 +1,17 @@
 {
-  "_note": "Populate from the scraped Rates page. Shape may evolve once we see the live data.",
-  "seasons": [],
+  "seasons": [
+    { "name": "Off Peak", "nightlyLow": 275, "nightlyHigh": 325 },
+    { "name": "Peak",     "nightlyLow": 375, "nightlyHigh": 425 }
+  ],
   "fees": {
-    "cleaning": null,
-    "petFee": null,
-    "securityDeposit": null
+    "cleaning": 250,
+    "damageDeposit": 250,
+    "lodgingTaxRate": 0.09
   },
-  "minimumStay": null,
-  "currency": "USD"
+  "promo": {
+    "label": "Get 15% off NOW !!!",
+    "discount": 0.15
+  },
+  "currency": "USD",
+  "notes": "Rates and Availability Vary Seasonally. We'll get you an exact price with your discount applied!"
 }

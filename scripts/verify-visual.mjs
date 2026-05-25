@@ -23,18 +23,24 @@ const LIVE_ORIGIN = 'https://rangeleyretreat.com';
 const LOCAL_ORIGIN = process.env.LOCAL_ORIGIN || 'http://localhost:4321';
 
 const DEFAULT_PATHS = [
-  '/', '/rangeley-maine-lodging', '/gallery', '/rates',
-  '/booking-request', '/reviews', '/our-story', '/blog', '/old-gallery',
+  '/', '/rangeley-maine-lodging', '/maine-vacation-rental-gallery', '/rates',
+  '/booking-request', '/reviews', '/our-story', '/blog',
+  '/privacy-policy', '/terms-and-conditions',
 ];
 
 async function shot(page, url, file) {
-  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
-  await page.waitForTimeout(1500);
+  // Wix never goes networkidle (analytics heartbeats), so use 'load'.
+  await page.goto(url, { waitUntil: 'load', timeout: 45000 });
+  await page.waitForTimeout(4000);
   await page.screenshot({ path: file, fullPage: true });
 }
 
 async function main() {
-  const paths = process.argv.slice(2).length ? process.argv.slice(2) : DEFAULT_PATHS;
+  // Strip MSYS/Git Bash path mangling — if Git Bash sees "/" it expands to
+  // the Windows root. Treat anything that looks like a Windows path as "/".
+  const rawArgs = process.argv.slice(2);
+  const cleaned = rawArgs.map((a) => /^[A-Za-z]:[\\/]/.test(a) ? '/' : a);
+  const paths = cleaned.length ? cleaned : DEFAULT_PATHS;
   await mkdir(OUT, { recursive: true });
   const browser = await chromium.launch({ headless: true });
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });

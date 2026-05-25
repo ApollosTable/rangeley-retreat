@@ -177,17 +177,30 @@ async function rewriteCss(css, baseUrl, downloaded) {
 }
 
 async function rewriteSrcset(value, baseUrl, downloaded) {
-  // srcset is a comma-separated list of "url descriptor" pairs.
-  const parts = value.split(',').map((p) => p.trim()).filter(Boolean);
+  // Wix outputs srcset URLs whose Wix-CDN transform path contains literal
+  // `, ` separators (e.g. `.../v1/fill/w_39, h_39, al_c, ...`). A naive split
+  // on `,` shreds those URLs. Instead parse `<URL> <descriptor>` pairs by
+  // anchoring on the descriptor (digits + x|w), which can't appear inside
+  // a Wix path.
+  const pairRe = /(\S.+?)\s+(\d+(?:\.\d+)?[xw])(?=\s*,|\s*$)/g;
+  const pairs = [];
+  let m;
+  while ((m = pairRe.exec(value))) {
+    pairs.push({ url: m[1].trim(), descriptor: m[2] });
+  }
+  if (pairs.length === 0) {
+    // Fall back to whitespace-split (single URL, optional descriptor).
+    const [url, ...rest] = value.trim().split(/\s+/);
+    pairs.push({ url, descriptor: rest.join(' ') });
+  }
   const out = [];
-  for (const part of parts) {
-    const [url, ...rest] = part.split(/\s+/);
+  for (const { url, descriptor } of pairs) {
     try {
       const abs = new URL(url, baseUrl).toString();
       const local = await downloadAsset(abs, downloaded);
-      out.push(((local || url) + (rest.length ? ' ' + rest.join(' ') : '')));
+      out.push((local || url) + (descriptor ? ' ' + descriptor : ''));
     } catch {
-      out.push(part);
+      out.push(url + (descriptor ? ' ' + descriptor : ''));
     }
   }
   return out.join(', ');
