@@ -1,5 +1,8 @@
 node_modules/
-dist/
+# Anchored to root — there are vendor 'dist' directories inside the scraped
+# Wix bundle tree (e.g. public/_wix/static.parastorage.com/services/.../dist/)
+# that MUST stay tracked.
+/dist/
 .astro/
 .env
 .env.local
