@@ -206,6 +206,18 @@ async function rewriteSrcset(value, baseUrl, downloaded) {
   return out.join(', ');
 }
 
+function rewriteInternalLinks(html) {
+  // Anchor hrefs to either rangeleyretreat.com host go to relative paths so
+  // the cloned site stays inside its own domain.
+  return html.replace(
+    /(href\s*=\s*["'])https?:\/\/(?:www\.)?rangeleyretreat\.com(["'])/gi,
+    '$1/$2'
+  ).replace(
+    /(href\s*=\s*["'])https?:\/\/(?:www\.)?rangeleyretreat\.com(\/[^"']*)(["'])/gi,
+    '$1$2$3'
+  );
+}
+
 async function scrapePage(browser, path, pageUrl, downloaded) {
   console.log(`\n→ ${pageUrl}`);
   const ctx = await browser.newContext({
@@ -311,6 +323,9 @@ async function scrapePage(browser, path, pageUrl, downloaded) {
       html = html.slice(0, m.start) + replaced + html.slice(m.end);
     }
   }
+
+  // Rewrite internal cross-page links to relative paths.
+  html = rewriteInternalLinks(html);
 
   // Save.
   const slug = slugFor(path);
