@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+
+# Scraper output — keep assets we promote to public/, ignore raw HTML dumps
+scraped/raw/
+scraped/cache/
