@@ -33,13 +33,14 @@ const ORIGIN = 'https://rangeleyretreat.com';
 const SEED_PATHS = [
   '/',
   '/rangeley-maine-lodging',
-  '/gallery',
+  '/maine-vacation-rental-gallery',
   '/rates',
   '/booking-request',
   '/reviews',
   '/our-story',
   '/blog',
-  '/old-gallery',
+  '/privacy-policy',
+  '/terms-and-conditions',
 ];
 
 // Hosts we'll mirror locally. Any asset URL whose host matches one of these
@@ -75,7 +76,10 @@ function assetLocalPath(absUrl) {
   // Strip query strings for filesystem; preserve in a hash so distinct
   // query-string variants don't collide.
   const qhash = u.search ? '-' + createHash('sha1').update(u.search).digest('hex').slice(0, 8) : '';
-  let p = u.pathname;
+  // Decode URL path → filesystem path (browsers/servers decode %7E etc.
+  // before looking up files; the file on disk must match the decoded name).
+  let p;
+  try { p = decodeURIComponent(u.pathname); } catch { p = u.pathname; }
   if (p.endsWith('/')) p += 'index';
   // Insert query hash before extension.
   const dot = p.lastIndexOf('.');
@@ -196,14 +200,26 @@ async function scrapePage(browser, path, pageUrl, downloaded) {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
   });
   const page = await ctx.newPage();
-  const response = await page.goto(pageUrl, { waitUntil: 'networkidle', timeout: 60000 });
+  // Wix runs analytics/heartbeat traffic indefinitely, so networkidle never
+  // resolves. Use 'load' (initial fetch + subresources) then wait for hydration.
+  const response = await page.goto(pageUrl, { waitUntil: 'load', timeout: 60000 });
   if (!response || !response.ok()) {
     console.warn(`  status ${response ? response.status() : 'no response'}`);
     await ctx.close();
     return { html: null, links: [] };
   }
-  // Give Wix's hydration a moment.
-  await page.waitForTimeout(2500);
+  // Give Wix's hydration time. We also wait for one of the key body
+  // classes Wix applies once it finishes booting.
+  try {
+    await page.waitForFunction(
+      () => document.body && document.body.getAttribute('data-hk') !== null
+        || document.querySelectorAll('[data-mesh-id]').length > 5,
+      { timeout: 15000 }
+    );
+  } catch {
+    // Best-effort; continue even if signal didn't fire.
+  }
+  await page.waitForTimeout(3500);
   // Force-render below-the-fold lazy images by scrolling.
   await page.evaluate(async () => {
     await new Promise((res) => {
@@ -220,14 +236,18 @@ async function scrapePage(browser, path, pageUrl, downloaded) {
   });
   await page.waitForTimeout(1500);
 
-  // Discover internal links from the nav.
-  const links = await page.evaluate((origin) => {
+  // Discover internal links from the nav. Wix uses both apex and www hosts
+  // depending on the page — accept either.
+  const links = await page.evaluate(() => {
+    const internalHosts = new Set(['rangeleyretreat.com', 'www.rangeleyretreat.com']);
     const anchors = Array.from(document.querySelectorAll('a[href]'));
     return anchors
       .map((a) => a.href)
-      .filter((h) => h.startsWith(origin))
+      .filter((h) => {
+        try { return internalHosts.has(new URL(h).host); } catch { return false; }
+      })
       .map((h) => new URL(h).pathname);
-  }, ORIGIN);
+  });
 
   // Inline the full rendered HTML.
   let html = await page.content();

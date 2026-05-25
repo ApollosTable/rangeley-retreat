@@ -1,0 +1,49 @@
+{
+  "scrapedAt": "2026-05-25T00:37:04.858Z",
+  "pages": [
+    {
+      "path": "/",
+      "slug": "index"
+    },
+    {
+      "path": "/rangeley-maine-lodging",
+      "slug": "rangeley-maine-lodging"
+    },
+    {
+      "path": "/maine-vacation-rental-gallery",
+      "slug": "maine-vacation-rental-gallery"
+    },
+    {
+      "path": "/rates",
+      "slug": "rates"
+    },
+    {
+      "path": "/booking-request",
+      "slug": "booking-request"
+    },
+    {
+      "path": "/reviews",
+      "slug": "reviews"
+    },
+    {
+      "path": "/our-story",
+      "slug": "our-story"
+    },
+    {
+      "path": "/blog",
+      "slug": "blog"
+    },
+    {
+      "path": "/privacy-policy",
+      "slug": "privacy-policy"
+    },
+    {
+      "path": "/terms-and-conditions",
+      "slug": "terms-and-conditions"
+    },
+    {
+      "path": "/blank",
+      "slug": "blank"
+    }
+  ]
+}

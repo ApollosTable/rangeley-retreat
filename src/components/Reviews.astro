@@ -1,0 +1,18 @@
+---
+import reviews from '../data/reviews.json';
+---
+<div class="reviews">
+  {reviews.length === 0 && (
+    <p class="reviews-empty">No reviews loaded yet — populate <code>src/data/reviews.json</code>.</p>
+  )}
+  {reviews.map((r) => (
+    <article class="review">
+      <header>
+        <strong>{r.author}</strong>
+        {r.rating != null && <span class="rating">{'★'.repeat(r.rating)}</span>}
+        {r.date && <time datetime={r.date}>{r.date}</time>}
+      </header>
+      <p>{r.text}</p>
+    </article>
+  ))}
+</div>

@@ -1,0 +1,11 @@
+{
+  "_note": "Populate from the scraped Rates page. Shape may evolve once we see the live data.",
+  "seasons": [],
+  "fees": {
+    "cleaning": null,
+    "petFee": null,
+    "securityDeposit": null
+  },
+  "minimumStay": null,
+  "currency": "USD"
+}

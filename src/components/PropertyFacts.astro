@@ -1,0 +1,17 @@
+---
+import property from '../data/property.json';
+
+/**
+ * Property facts pulled from src/data/property.json.
+ * Default markup is a fallback — during componentization, replace with the
+ * scraped Wix markup but keep these expressions in place of literal numbers.
+ */
+---
+<dl class="property-facts">
+  <div><dt>Bedrooms</dt><dd>{property.bedrooms}</dd></div>
+  <div><dt>Bathrooms</dt><dd>{property.bathrooms}</dd></div>
+  <div><dt>Sleeps</dt><dd>{property.maxGuests}</dd></div>
+  <div><dt>Square Feet</dt><dd>{property.sqft.toLocaleString()}</dd></div>
+  <div><dt>Living Areas</dt><dd>{property.livingAreas}</dd></div>
+  <div><dt>Location</dt><dd>{property.address.city}, {property.address.stateAbbr}</dd></div>
+</dl>

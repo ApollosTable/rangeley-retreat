@@ -1,0 +1,13 @@
+{
+  "bedrooms": 4,
+  "bathrooms": 2,
+  "maxGuests": 11,
+  "sqft": 2700,
+  "livingAreas": 2,
+  "address": {
+    "street": "69 Harold Ross Road",
+    "city": "Dallas Plantation",
+    "state": "Maine",
+    "stateAbbr": "ME"
+  }
+}

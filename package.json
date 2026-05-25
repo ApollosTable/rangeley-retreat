@@ -5,12 +5,13 @@
   "private": true,
   "description": "Pixel-perfect clone of rangeleyretreat.com, moving off Wix",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
+    "dev": "node scripts/prepare-pages.mjs && astro dev",
+    "start": "node scripts/prepare-pages.mjs && astro dev",
+    "build": "node scripts/prepare-pages.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "scrape": "node scripts/scrape.mjs"
+    "scrape": "node scripts/scrape.mjs",
+    "prepare-pages": "node scripts/prepare-pages.mjs"
   },
   "dependencies": {
     "astro": "^4.16.0"

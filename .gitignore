@@ -7,6 +7,21 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Scraper output — keep assets we promote to public/, ignore raw HTML dumps
-scraped/raw/
+# Scraper internals — assets live in public/_wix/, raw HTML in scraped/raw/
+# (kept in git so the build is reproducible without re-scraping).
+scraped/diff/
 scraped/cache/
+
+# Pages staged into public/ by scripts/prepare-pages.mjs.
+# These are regenerated from scraped/raw/ on every build.
+public/index.html
+public/rangeley-maine-lodging/
+public/maine-vacation-rental-gallery/
+public/rates/
+public/booking-request/
+public/reviews/
+public/our-story/
+public/blog/
+public/privacy-policy/
+public/terms-and-conditions/
+public/.scraped-pages.json

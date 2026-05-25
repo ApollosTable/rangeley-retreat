@@ -1,0 +1,20 @@
+---
+/**
+ * Renders all images from public/images/gallery/ as a grid.
+ * Drop new images into that folder and they appear automatically.
+ *
+ * The wrapper class names are placeholders — replace them with the
+ * scraped Wix gallery classes during componentization so the visual
+ * matches the original layout.
+ */
+const images = Object.keys(
+  import.meta.glob('/public/images/gallery/*.{jpg,jpeg,png,webp,avif,gif}', { eager: true })
+).map((p) => p.replace('/public', ''));
+---
+<div class="gallery-grid">
+  {images.map((src) => (
+    <a href={src} class="gallery-item">
+      <img src={src} loading="lazy" alt="" />
+    </a>
+  ))}
+</div>
